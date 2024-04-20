@@ -129,8 +129,7 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 {
 	u32 event_id = *((u32 *)data);
 	data = data + sizeof(u32);
-	//char log_buffer[4096];
-	char log_buffer[8192];
+	char log_buffer[4096];
 	memset(log_buffer, 0, sizeof(log_buffer));
 	switch (event_id)
 	{
@@ -143,11 +142,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-		
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		char escaped_msg[250];
 
@@ -217,14 +211,13 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							"lms" : "%s"
 						},
 						"artifacts" : {
-							"exe" : "%s",
-							"epoc": "%lld" 
+							"exe" : "%s"
 							// "file_writen"
 						}
 					}),
 				d->event.ts, ts, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->fd, escaped_msg, d->event.task.exe_path, epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->fd, escaped_msg, d->event.task.exe_path);
 		break;
 	}
 	case SYSCALL_READ:
@@ -236,11 +229,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -271,14 +259,13 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 						},
 						"artifacts" : {
 							"exe" : "%s",
-							"file_read" : "%s",
-							"epoc": "%lld" 
+							"file_read" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
 				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->fd, (unsigned int)d->buf, d->count,
-				d->event.task.exe_path, d->filepath, epoctime);
+				d->event.task.exe_path, d->filepath);
 		break;
 	}
 	case SYSCALL_WRITE:
@@ -290,11 +277,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -325,14 +307,13 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 						},
 						"artifacts" : {
 							"exe" : "%s",
-							"file_written" : "%s",
-							"epoc": "%lld" 
+							"file_written" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
 				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->fd, (unsigned int)d->buf, d->count,
-				d->event.task.exe_path, d->filepath,epoctime);
+				d->event.task.exe_path, d->filepath);
 		break;
 	}
 	case SYSCALL_OPEN:
@@ -344,11 +325,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -378,14 +354,12 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							"mode" : % d
 						},
 						"artifacts" : {
-							"exe" : "%s",
-							"epoc": "%lld" 
-
+							"exe" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->filename, d->flags, d->mode, d->event.task.exe_path,epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->filename, d->flags, d->mode, d->event.task.exe_path);
 		break;
 	}
 	case SYSCALL_CLOSE:
@@ -397,11 +371,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -429,13 +398,12 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							"fd" : % d
 						},
 						"artifacts" : {
-							"exe" : "%s",
-							"epoc": "%lld" 
+							"exe" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->fd, d->event.task.exe_path, epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->fd, d->event.task.exe_path);
 		break;
 	}
 	case SYSCALL_DUP:
@@ -447,11 +415,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -479,13 +442,12 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							"fildes" : % d
 						},
 						"artifacts" : {
-							"exe" : "%s",
-							"epoc": "%lld" 
+							"exe" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->fildes, d->event.task.exe_path, epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->fildes, d->event.task.exe_path);
 		break;
 	}
 	case SYSCALL_DUP2:
@@ -497,11 +459,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -530,13 +487,12 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							"newfd" : % d
 						},
 						"artifacts" : {
-							"exe" : "%s",
-							"epoc": "%lld" 
+							"exe" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->oldfd, d->newfd, d->event.task.exe_path,epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->oldfd, d->newfd, d->event.task.exe_path);
 		break;
 	}
 	case SYSCALL_CONNECT:
@@ -548,12 +504,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
-
 		struct in_addr s_addr_in;
 		s_addr_in.s_addr = d->s_addr;
 
@@ -587,13 +537,12 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 						"artifacts" : {
 							"exe" : "%s",
 							"IP" : "%s",
-							"port" : "%d",
-							"epoc": "%lld" 
+							"port" : "%d"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->fd, d->uservaddr, d->addrlen, d->event.task.exe_path, inet_ntoa(s_addr_in), d->sin_port, epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->fd, d->uservaddr, d->addrlen, d->event.task.exe_path, inet_ntoa(s_addr_in), d->sin_port);
 		break;
 	}
 	case SYSCALL_ACCEPT:
@@ -601,16 +550,10 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		const struct accept_data_t *d = data;
 		char ts[32];
 		time_t t;
-
+		
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
-
 		struct in_addr s_addr_in;
 		s_addr_in.s_addr = d->s_addr;
 
@@ -644,13 +587,12 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 						"artifacts" : {
 							"exe" : "%s",
 							"IP" : "%s",
-							"port" : "%d",
-							"epoc": "%lld" 
+							"port" : "%d"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->fd, d->upeer_sockaddr, d->upeer_addrlen, d->event.task.exe_path,inet_ntoa(s_addr_in), d->sin_port, epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->fd, d->upeer_sockaddr, d->upeer_addrlen, d->event.task.exe_path,inet_ntoa(s_addr_in), d->sin_port);
 		break;
 	}
 	case SYSCALL_SOCKET:
@@ -663,11 +605,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
 
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
-		
 		sprintf(log_buffer,
 				QUOTE(
 					{
@@ -696,13 +633,12 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							"protocol" : %d
 						},
 						"artifacts" : {
-							"exe" : "%s",
-							"epoc": "%lld" 
+							"exe" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->domain, d->type, d->protocol, d->event.task.exe_path,epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->domain, d->type, d->protocol, d->event.task.exe_path);
 		break;
 	}
 	case SYSCALL_SENDTO:
@@ -714,11 +650,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -749,18 +680,16 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							"flags" : % u
 						},
 						"artifacts" : {
-							"exe" : "%s",
-							"epoc": "%lld" 
+							"exe" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->sockfd, d->buff, d->len, d->flags, d->event.task.exe_path,epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->sockfd, d->buff, d->len, d->flags, d->event.task.exe_path);
 		break;
 	}
 	case SYSCALL_RECVFROM:
 	{
-		//fprintf(stderr,"Received Data: %s\n", data);
 		const struct recv_data_t *d = data;
 		char ts[32];
 		time_t t;
@@ -768,11 +697,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -803,13 +727,12 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							"flags" : % u
 						},
 						"artifacts" : {
-							"exe" : "%s",
-							"epoc": "%lld" 
+							"exe" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->sockfd, d->buff, d->len, d->flags, d->event.task.exe_path,epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->sockfd, d->buff, d->len, d->flags, d->event.task.exe_path);
 		break;
 	}
 	case SYSCALL_BIND:
@@ -821,11 +744,8 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
+		struct in_addr s_addr_in;
+		s_addr_in.s_addr = d->s_addr;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -856,12 +776,13 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 						},
 						"artifacts" : {
 							"exe" : "%s",
-							"epoc": "%lld" 
+							"IP" : "%s",
+							"port" : "%d"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->fd, d->umyaddr, d->addrlen, d->event.task.exe_path,epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->fd, d->umyaddr, d->addrlen, d->event.task.exe_path, inet_ntoa(s_addr_in), d->sin_port);
 		break;
 	}
 	case SYSCALL_CLONE:
@@ -873,11 +794,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -909,14 +825,13 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							"tls" : % lu
 						},
 						"artifacts" : {
-							"exe" : "%s",
-							"epoc": "%lld" 
+							"exe" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
 				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->flags, d->newsp, d->parent_tid,
-				d->child_tid, d->tls, d->event.task.exe_path,epoctime);
+				d->child_tid, d->tls, d->event.task.exe_path);
 		break;
 	}
 	case SYSCALL_FORK:
@@ -928,11 +843,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -957,13 +867,12 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							}
 						},
 						"artifacts" : {
-							"exe" : "%s",
-							"epoc": "%lld" 
+							"exe" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->event.task.exe_path, epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->event.task.exe_path);
 		break;
 	}
 	case SYSCALL_VFORK:
@@ -975,11 +884,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -1004,13 +908,12 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							}
 						},
 						"artifacts" : {
-							"exe" : "%s",
-							"epoc": "%lld" 
+							"exe" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->event.task.exe_path,epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->event.task.exe_path);
 		break;
 	}
 	case SYSCALL_EXECVE:
@@ -1022,11 +925,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -1055,7 +953,7 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							"argv" : "0x%08x"
 						}
 					}),
-				epoctime, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
+				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
 				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->filename, d->argv);
 		break;
@@ -1069,11 +967,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -1101,13 +994,12 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							"error_code" : "%d"
 						},
 						"artifacts" : {
-							"exe" : "%s",
-							"epoc": "%lld" 
+							"exe" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->error_code, d->event.task.exe_path,epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->error_code, d->event.task.exe_path);
 		break;
 	}
 	case SYSCALL_EXIT_GROUP:
@@ -1119,11 +1011,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -1151,13 +1038,12 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							"error_code" : "%d"
 						},
 						"artifacts" : {
-							"exe" : "%s",
-							"epoc": "%lld" 
+							"exe" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->error_code, d->event.task.exe_path,epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->error_code, d->event.task.exe_path);
 		break;
 	}
 	case SYSCALL_OPENAT:
@@ -1169,11 +1055,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -1204,13 +1085,12 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							"mode" : % d
 						},
 						"artifacts" : {
-							"exe" : "%s",
-							"epoc": "%lld" 
+							"exe" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->dfd, d->filename, d->flags, d->mode, d->event.task.exe_path,epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->dfd, d->filename, d->flags, d->mode, d->event.task.exe_path);
 		break;
 	}
 	case SYSCALL_UNLINKAT:
@@ -1222,11 +1102,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -1256,13 +1131,12 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							"flag" : % d
 						},
 						"artifacts" : {
-							"exe" : "%s",
-							"epoc": "%lld" 
+							"exe" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->dfd, d->pathname, d->flag, d->event.task.exe_path,epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->dfd, d->pathname, d->flag, d->event.task.exe_path);
 		break;
 	}
 	case SYSCALL_ACCEPT4:
@@ -1274,12 +1148,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
-
 		struct in_addr s_addr_in;
 		s_addr_in.s_addr = d->s_addr;
 
@@ -1314,13 +1182,12 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 						"artifacts" : {
 							"exe" : "%s",
 							"IP" : "%s",
-							"port" : "%d",
-							"epoc": "%lld" 
+							"port" : "%d"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->fd, d->upeer_sockaddr, d->upeer_addrlen, d->flags, d->event.task.exe_path,inet_ntoa(s_addr_in), d->sin_port, epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->fd, d->upeer_sockaddr, d->upeer_addrlen, d->flags, d->event.task.exe_path,inet_ntoa(s_addr_in), d->sin_port);
 		break;
 	}
 	case SYSCALL_DUP3:
@@ -1332,11 +1199,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 		time(&t);
 		struct tm *tmd = localtime(&t);
 		strftime(ts, sizeof(ts), "%H:%M:%S", tmd);
-
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
 
 		sprintf(log_buffer,
 				QUOTE(
@@ -1366,13 +1228,12 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 							"flags" : % d
 						},
 						"artifacts" : {
-							"exe" : "%s",
-							"epoc": "%lld" 
+							"exe" : "%s"
 						}
 					}),
 				d->event.ts, ts, d->event.syscall_id, d->retval, d->event.task.host_pid, d->event.task.host_tid,
 				d->event.task.host_ppid, d->event.task.pid, d->event.task.tid, d->event.task.ppid, d->event.task.cgroup_id,
-				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->oldfd, d->newfd, d->flags, d->event.task.exe_path,epoctime);
+				d->event.task.mntns_id, d->event.task.pidns_id, d->event.task.comm, d->oldfd, d->newfd, d->flags, d->event.task.exe_path);
 		break;
 	}
 	default:
@@ -1382,7 +1243,6 @@ static int handle_event(void *ctx, void *data, size_t data_sz)
 	}
 	// printf(",\n");
 	strcat(log_buffer, ",\n");
-	//printf("LOG = : %s\n", log_buffer);
 	// printf("LOG = : %s\n", log_buffer);
 	send_message(log_buffer);
 
@@ -1407,7 +1267,6 @@ void send_message(char *message)
 		}
 	}
 	fprintf(stderr,"Sent message to the server: %s\n", message);
-	return 0;
 }
 
 int main(int argc, char **argv)
@@ -1425,59 +1284,21 @@ int main(int argc, char **argv)
 	// fprintf(stderr, "Trying to send request!\n");
 	// send_request();
 
-	/* DNS Resolution Logic */
 	/* Setup socket for sending logs */
-	
-	// const char *serverHostname = "xlp_server"; // Hostname of the server
-
-	// fprintf(stderr, "Creating socket \n");
-
-	// clientSocket = socket(AF_INET, SOCK_STREAM, 0);
-	// if (clientSocket == -1)
-	// {
-	// 	perror("Error: Could not create socket");
-	// 	return 1;
-	// }
-	// struct sockaddr_in serverAddr;
-	// serverAddr.sin_family = AF_INET;
-	// serverAddr.sin_port = htons(8086);
-	// struct hostent *hp;
-	// hp = gethostbyname(serverHostname);
-	// serverAddr.sin_addr.s_addr = *((unsigned long *)hp->h_addr);
-
-	// fprintf(stderr, "Connecting to server \n");
-	// if (connect(clientSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
-	// {
-	// 	perror("Error: Could not connect to the server");
-	// 	close(clientSocket);
-	// 	return 1;
-	// }
-	
-
-	// /* Server IP and Port Hard Coded */
-	const char *serverIP = "192.168.56.11";
-	const int serverPort = 8086;
-
+	const char *serverHostname = "192.168.56.11"; // Hostname of the server
 	fprintf(stderr, "Creating socket \n");
-
 	clientSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if (clientSocket == -1)
 	{
 		perror("Error: Could not create socket");
 		return 1;
 	}
-
 	struct sockaddr_in serverAddr;
 	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_port = htons(serverPort);
-
-	// Use inet_pton to convert the IP address from string to binary format
-	if (inet_pton(AF_INET, serverIP, &serverAddr.sin_addr) <= 0)
-	{
-		perror("Error: Invalid IP address");
-		close(clientSocket);
-		return 1;
-	}
+	serverAddr.sin_port = htons(8086);
+	struct hostent *hp;
+	hp = gethostbyname(serverHostname);
+	serverAddr.sin_addr.s_addr = *((unsigned long *)hp->h_addr);
 
 	fprintf(stderr, "Connecting to server \n");
 	if (connect(clientSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
@@ -1486,7 +1307,6 @@ int main(int argc, char **argv)
 		close(clientSocket);
 		return 1;
 	}
-
 
 	/* Parse command line arguments */
 	err = argp_parse(&argp, argc, argv, 0, NULL, &arguments);
@@ -1551,11 +1371,7 @@ int main(int argc, char **argv)
 	printf("{\n\"logs\":[\n");
 	while (!exiting)
 	{
-		time_t current_time;
-   	 	time(&current_time);
-		char* timeString = ctime(&current_time);
-		long long epoctime = (long long)current_time * 1000;
-		err = ring_buffer__poll(rb, 500 /* 1out, ms */);
+		err = ring_buffer__poll(rb, 100 /* 1out, ms */);
 		/* Ctrl-C will cause -EINTR */
 		if (err == -EINTR)
 		{
@@ -1566,10 +1382,6 @@ int main(int argc, char **argv)
 		{
 			printf("Error polling perf buffer: %d\n", err);
 			break;
-		}
-		if (err > 0){
-			printf("Time : %lld -- Number of events processed   %d\n", epoctime, err);
-			printf("Time : %lld -- Size of Record Consumed %d\n", epoctime, sizeof(err));
 		}
 	}
 	printf("]\n}");
