@@ -54,7 +54,7 @@ if __name__ == "__main__":
             line = line.strip()
             if line.startswith("Host"):
                 try:
-                    line = line + ","
+                    # line = line + ","
                     line = ''.join(line.rsplit(',', 1))
                     host_id = int(line.split(" ")[1])
                     json_data = json.loads(line.split(":", 1)[1].strip())
@@ -252,7 +252,7 @@ if __name__ == "__main__":
                         node_counter = node_counter + 1
                         edges.append((current_node_id, file_reverse_map[(host_id, host_pid, host_tid,sockfd)] ,{"syscall":f"{syscall_name}", "timestamp":timestamp}))
                         node_file_details[current_node_id][sockfd] = file_reverse_map[(host_id, host_pid, host_tid,sockfd)]
-                        print("DONE Socket")
+                        # print("DONE Socket")
                         
                     if syscall_name == "bind":
                         
@@ -275,7 +275,7 @@ if __name__ == "__main__":
                             edges.append((current_node_id, old_counter ,{"syscall":f"{syscall_name}", "timestamp":timestamp}))
                             edges.append((old_counter, file_reverse_map[(host_id, host_pid, host_tid,sockfd)] ,{"syscall":f"{syscall_name}", "timestamp":timestamp}))
                         node_file_details[current_node_id][sockfd] = file_reverse_map[(host_id, host_pid, host_tid,sockfd)]
-                        print("DONE Bind")
+                        # print("DONE Bind")
                     
                     if (syscall_name == "accept") or (syscall_name == "accept4") :
                         sockfd = json_data["event_context"]["retval"]
@@ -307,7 +307,7 @@ if __name__ == "__main__":
                         edges.append((current_node_id, bound_socket_id ,{"syscall":f"{syscall_name}", "timestamp":timestamp}))
                         edges.append((bound_socket_id,  file_reverse_map[(host_id, host_pid, host_tid,sockfd)] ,{"syscall":f"{syscall_name}", "timestamp":timestamp}))
                         node_file_details[current_node_id][sockfd] = file_reverse_map[(host_id, host_pid, host_tid,sockfd)]
-                        print("DONE Accept")   
+                        # print("DONE Accept")   
                         
                     if syscall_name == "connect": 
                         client_sockfd = json_data["arguments"]["fd"]
@@ -337,7 +337,7 @@ if __name__ == "__main__":
                         edges.append((current_node_id, old_counter ,{"syscall":f"{syscall_name}", "timestamp":timestamp}))
                         edges.append((old_counter,  file_reverse_map[(host_id, host_pid, host_tid,client_sockfd)] ,{"syscall":f"{syscall_name}", "timestamp":timestamp}))
                         node_file_details[current_node_id][client_sockfd] = file_reverse_map[(host_id, host_pid, host_tid,client_sockfd)]
-                        print("DONE Connect")
+                        # print("DONE Connect")
                     
                     if syscall_name == "send": 
                         sockfd = json_data["arguments"]["sockfd"]
@@ -351,7 +351,7 @@ if __name__ == "__main__":
                         own_IP = nodes[node_id]["own IP"]
                         own_port = nodes[node_id]["own port"]
                         edges.append((ip_port_id_map[(own_IP,own_port,send_to_IP,send_to_port)], ip_port_id_map[(send_to_IP,send_to_port,own_IP,own_port)] ,{"syscall":f"{syscall_name}", "timestamp":timestamp}))
-                        print("DONE send")
+                        # print("DONE send")
                         
                     if syscall_name == "recv": 
                         sockfd = json_data["arguments"]["sockfd"]
@@ -364,7 +364,7 @@ if __name__ == "__main__":
                         own_port = nodes[node_id]["own port"]
                         
                         edges.append((ip_port_id_map[(own_IP,own_port,recv_from_IP,recv_from_port)], ip_port_id_map[(recv_from_IP,recv_from_port,own_IP,own_port)] ,{"syscall":f"{syscall_name}", "timestamp":timestamp}))
-                        print("DONE recv")
+                        # print("DONE recv")
                 
                     if (syscall_name == "clone") or (syscall_name == "fork") or (syscall_name == "vfork"):
                         retval = int(json_data["event_context"]["retval"])                        
@@ -385,8 +385,7 @@ if __name__ == "__main__":
                             node_file_details[current_node_id] = copy.deepcopy(node_file_details[clone_map[(host_id, parent_host_pid, current_tid,0)]])
                             clone_map.pop((host_id, parent_host_pid, current_tid,0))
                         else:
-                            clone_map[(host_id, parent_host_pid, current_tid,1)] = current_node_id
-                        print("clone done")
+                        # print("clone done")
                     
                     if syscall_name == "execve":
                         binary_filename = json_data["arguments"]["filename"]
@@ -399,17 +398,17 @@ if __name__ == "__main__":
                             node_counter = node_counter+1
                         binary_id = existing_binaries[binary_filename]
                         edges.append((current_node_id,binary_id,{"syscall":f"{syscall_name}", "timestamp":timestamp}))
-                        print("execve done")
+                        # print("execve done")
                 
                     if syscall_name == "exit":
                         edges.append((current_node_id,1,{"syscall":f"{syscall_name}", "timestamp":timestamp}))
                         
                 except (json.JSONDecodeError, KeyError) as e:
-                    # print(f"Error extracting data from line: {line.strip()}, {e}")
+                    print(f"Error extracting data from line: {line.strip()}, {e}\n")
                     
                     continue
                 except Exception as e:
-                    # print(f"Error processing line: {line.strip()}, {e}")
+                    print(f"Error processing line: {line.strip()}, {e}\n")
                     continue
     
     # # Create an empty graph
