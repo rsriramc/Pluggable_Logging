@@ -385,6 +385,7 @@ if __name__ == "__main__":
                             node_file_details[current_node_id] = copy.deepcopy(node_file_details[clone_map[(host_id, parent_host_pid, current_tid,0)]])
                             clone_map.pop((host_id, parent_host_pid, current_tid,0))
                         else:
+                            clone_map[(host_id, parent_host_pid, current_tid,1)] = current_node_id
                         # print("clone done")
                     
                     if syscall_name == "execve":
